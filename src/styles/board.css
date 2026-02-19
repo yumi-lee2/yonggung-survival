@@ -1,0 +1,72 @@
+.board-perspective {
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.board-isometric {
+  transform: rotateX(55deg) rotateZ(45deg);
+  transform-style: preserve-3d;
+  display: grid;
+  gap: 2px;
+  position: relative;
+  transition: transform 0.5s ease;
+}
+
+.board-isometric.game-over {
+  pointer-events: none;
+}
+
+/* Grid size variants */
+.board-8 {
+  grid-template-columns: repeat(8, var(--tile-size, 48px));
+  grid-template-rows: repeat(8, var(--tile-size, 48px));
+}
+
+.board-12 {
+  grid-template-columns: repeat(12, var(--tile-size, 36px));
+  grid-template-rows: repeat(12, var(--tile-size, 36px));
+}
+
+.board-16 {
+  grid-template-columns: repeat(16, var(--tile-size, 28px));
+  grid-template-rows: repeat(16, var(--tile-size, 28px));
+}
+
+/* Board shadow on the "floor" */
+.board-isometric::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.2), transparent 70%);
+  transform: translateZ(-20px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Mobile: flat view */
+@media (max-width: 768px) {
+  .board-perspective {
+    perspective: none;
+    padding: 1rem;
+  }
+
+  .board-isometric {
+    transform: none;
+  }
+
+  .board-8 {
+    --tile-size: min(10vw, 48px);
+  }
+
+  .board-12 {
+    --tile-size: min(7vw, 36px);
+  }
+
+  .board-16 {
+    --tile-size: min(5.5vw, 28px);
+  }
+}
