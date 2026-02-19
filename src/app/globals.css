@@ -1,7 +1,6 @@
 @import "tailwindcss";
-@import "../styles/board.css";
-@import "../styles/tile.css";
 @import "../styles/animations.css";
+@import "../styles/runner.css";
 
 :root {
   /* Background - sky to deep ocean */
@@ -16,51 +15,6 @@
   --text-primary: #f0f4f8;
   --text-secondary: #b8d4e8;
   --text-muted: #7a9ab8;
-
-  /* Tile - Hidden (jade/teal stone 비취색) */
-  --tile-hidden-light: #3a9a8a;
-  --tile-hidden-dark: #2a7a6a;
-  --tile-hover-light: #4aaa9a;
-  --tile-hover-dark: #3a9a8a;
-
-  /* Tile - Revealed (base - used when adjacentMines=0) */
-  --tile-revealed-light: #e8d5a3;
-  --tile-revealed-dark: #d4c090;
-
-  /* Tile - Flagged */
-  --tile-flag-light: #2a7a5a;
-  --tile-flag-dark: #1e6048;
-
-  /* Tile - Mine */
-  --tile-mine-light: #8a2a2a;
-  --tile-mine-dark: #6a1e1e;
-
-  /* Tile - Exit */
-  --tile-exit-light: #4aaa6a;
-  --tile-exit-dark: #2a8a4a;
-
-  /* Danger levels: sand(safe) → ocean(dangerous) */
-  --tile-danger-0-light: #e8d5a3;
-  --tile-danger-0-dark: #d4c090;
-  --tile-danger-1-light: #c9ba88;
-  --tile-danger-1-dark: #b5a878;
-  --tile-danger-2-light: #a89a6a;
-  --tile-danger-2-dark: #968860;
-  --tile-danger-3-light: #8a9a7a;
-  --tile-danger-3-dark: #788868;
-  --tile-danger-4-light: #6a9a8a;
-  --tile-danger-4-dark: #588878;
-  --tile-danger-5-light: #4a8a9a;
-  --tile-danger-5-dark: #387888;
-  --tile-danger-6-light: #3a7090;
-  --tile-danger-6-dark: #285e7e;
-  --tile-danger-7-light: #2a5a7a;
-  --tile-danger-7-dark: #184868;
-  --tile-danger-8-light: #1a3a5a;
-  --tile-danger-8-dark: #0a2848;
-
-  /* Tile dimensions */
-  --tile-size: 48px;
 
   /* UI */
   --card-bg: rgba(15, 40, 71, 0.85);
