@@ -32,6 +32,18 @@ export const DIFFICULTY_CONFIG: Record<Difficulty, DifficultyConfig> = {
 
 export const MINE_EMOJIS = ['🐙', '🦀', '🐍', '🐡', '🐉'];
 
+export const DANGER_EMOJIS: string[] = [
+  '',    // 0: no danger - dry sand
+  '🐚', // 1: shell - beach, almost safe
+  '🦀', // 2: crab - tidal flat, low danger
+  '🐠', // 3: fish - shallow water, moderate
+  '🐡', // 4: pufferfish - mid ocean
+  '🪸', // 5: coral - deep ocean
+  '🦑', // 6: squid - deep sea
+  '🦈', // 7: shark - near dragon palace
+  '🐉', // 8: dragon - dragon palace abyss
+];
+
 export const FLAG_EMOJI = '🌿';
 
 export const EXIT_EMOJI = '🌊';

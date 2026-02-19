@@ -40,7 +40,15 @@ export default function GameOverModal({
         </div>
 
         {/* Title */}
-        <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+        <h2
+          className="text-2xl font-bold"
+          style={{
+            color: 'var(--text-primary)',
+            textShadow: won
+              ? '0 0 20px rgba(255, 215, 0, 0.6), 0 2px 4px rgba(0,0,0,0.3)'
+              : '0 0 20px rgba(255, 60, 60, 0.5), 0 2px 4px rgba(0,0,0,0.3)',
+          }}
+        >
           {won ? '탈출 성공!' : '잡혔다!'}
         </h2>
 
@@ -58,7 +66,7 @@ export default function GameOverModal({
         >
           <div>
             <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
-              점수
+              ⭐ 점수
             </div>
             <div className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
               {score}
@@ -66,7 +74,7 @@ export default function GameOverModal({
           </div>
           <div>
             <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
-              시간
+              ⏱ 시간
             </div>
             <div className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
               {formatTime(elapsedTime)}
@@ -87,7 +95,9 @@ export default function GameOverModal({
           <div
             className="py-2 px-4 rounded-lg text-sm font-bold"
             style={{
-              background: 'linear-gradient(135deg, #ffd700, #ffaa00)',
+              background: 'linear-gradient(90deg, #ffd700, #ffaa00, #ffd700)',
+              backgroundSize: '200% 100%',
+              animation: 'goldShimmer 1.5s ease-in-out infinite',
               color: '#1a1a1a',
             }}
           >

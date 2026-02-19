@@ -4,59 +4,74 @@
 @import "../styles/animations.css";
 
 :root {
-  /* Underwater color palette */
-  --bg-deep: #0a1628;
-  --bg-mid: #0f2847;
-  --bg-light: #163a5f;
-  --bg-surface: #1a3a5c;
+  /* Background - sky to deep ocean */
+  --bg-sky: #87CEEB;
+  --bg-shallow: #5B9BD5;
+  --bg-deep: #1a3a5a;
+  --bg-abyss: #0a1628;
+  --bg-light: #2a5a7a;
+  --bg-surface: rgba(26, 58, 90, 0.8);
 
   /* Text */
-  --text-primary: #e0f0ff;
-  --text-secondary: #8bb8d9;
-  --text-muted: #5a8aaa;
+  --text-primary: #f0f4f8;
+  --text-secondary: #b8d4e8;
+  --text-muted: #7a9ab8;
 
-  /* Tile - Hidden */
-  --tile-hidden-light: #2a6b8a;
-  --tile-hidden-dark: #1e5570;
-  --tile-hidden-side-bottom: #174a63;
-  --tile-hidden-side-right: #1a5068;
-  --tile-hover-light: #3580a0;
-  --tile-hover-dark: #2a6b8a;
+  /* Tile - Hidden (jade/teal stone 비취색) */
+  --tile-hidden-light: #3a9a8a;
+  --tile-hidden-dark: #2a7a6a;
+  --tile-hover-light: #4aaa9a;
+  --tile-hover-dark: #3a9a8a;
 
-  /* Tile - Revealed */
-  --tile-revealed-light: #0d2a40;
-  --tile-revealed-dark: #091e30;
-  --tile-revealed-side: #071825;
+  /* Tile - Revealed (base - used when adjacentMines=0) */
+  --tile-revealed-light: #e8d5a3;
+  --tile-revealed-dark: #d4c090;
 
   /* Tile - Flagged */
   --tile-flag-light: #2a7a5a;
   --tile-flag-dark: #1e6048;
-  --tile-flag-side-bottom: #185040;
-  --tile-flag-side-right: #1a5845;
 
   /* Tile - Mine */
   --tile-mine-light: #8a2a2a;
   --tile-mine-dark: #6a1e1e;
-  --tile-mine-side: #551818;
 
   /* Tile - Exit */
-  --tile-exit-light: #2a5a8a;
-  --tile-exit-dark: #1e4570;
+  --tile-exit-light: #4aaa6a;
+  --tile-exit-dark: #2a8a4a;
+
+  /* Danger levels: sand(safe) → ocean(dangerous) */
+  --tile-danger-0-light: #e8d5a3;
+  --tile-danger-0-dark: #d4c090;
+  --tile-danger-1-light: #c9ba88;
+  --tile-danger-1-dark: #b5a878;
+  --tile-danger-2-light: #a89a6a;
+  --tile-danger-2-dark: #968860;
+  --tile-danger-3-light: #8a9a7a;
+  --tile-danger-3-dark: #788868;
+  --tile-danger-4-light: #6a9a8a;
+  --tile-danger-4-dark: #588878;
+  --tile-danger-5-light: #4a8a9a;
+  --tile-danger-5-dark: #387888;
+  --tile-danger-6-light: #3a7090;
+  --tile-danger-6-dark: #285e7e;
+  --tile-danger-7-light: #2a5a7a;
+  --tile-danger-7-dark: #184868;
+  --tile-danger-8-light: #1a3a5a;
+  --tile-danger-8-dark: #0a2848;
 
   /* Tile dimensions */
   --tile-size: 48px;
-  --tile-height: 8px;
 
   /* UI */
-  --card-bg: rgba(15, 40, 71, 0.8);
-  --card-border: rgba(100, 180, 255, 0.15);
+  --card-bg: rgba(15, 40, 71, 0.85);
+  --card-border: rgba(100, 180, 255, 0.2);
   --button-primary: #2a7aaa;
   --button-primary-hover: #3590c0;
   --button-danger: #aa3a3a;
   --modal-backdrop: rgba(5, 10, 20, 0.85);
 
   /* Tailwind overrides */
-  --background: var(--bg-deep);
+  --background: var(--bg-abyss);
   --foreground: var(--text-primary);
 }
 
@@ -66,7 +81,8 @@
 }
 
 body {
-  background: var(--bg-deep);
+  background: linear-gradient(180deg, var(--bg-sky) 0%, var(--bg-shallow) 20%, var(--bg-deep) 60%, var(--bg-abyss) 100%);
+  background-attachment: fixed;
   color: var(--text-primary);
   font-family: 'Noto Sans KR', sans-serif;
   overflow-x: hidden;
@@ -74,20 +90,10 @@ body {
 }
 
 /* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-abyss); }
+::-webkit-scrollbar-thumb { background: var(--bg-deep); border-radius: 3px; }
 
-::-webkit-scrollbar-track {
-  background: var(--bg-deep);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--bg-light);
-  border-radius: 3px;
-}
-
-/* Selection */
 ::selection {
   background: rgba(42, 122, 170, 0.4);
   color: var(--text-primary);

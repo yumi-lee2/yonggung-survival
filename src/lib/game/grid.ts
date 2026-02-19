@@ -78,7 +78,6 @@ export function placeMines(
 
   for (let r = 0; r < size; r++) {
     for (let c = 0; c < size; c++) {
-      if (newGrid[r][c].isMine) continue;
       let count = 0;
       for (const [nr, nc] of getNeighbors(r, c, size)) {
         if (newGrid[nr][nc].isMine) count++;

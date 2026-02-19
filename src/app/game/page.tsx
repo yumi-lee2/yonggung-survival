@@ -9,6 +9,8 @@ import { useHighScores } from '@/hooks/useHighScores';
 import Board from '@/components/game/Board';
 import GameHeader from '@/components/game/GameHeader';
 import GameOverModal from '@/components/game/GameOverModal';
+import OceanBackground from '@/components/ui/OceanBackground';
+import { Tutorial, DangerLegend } from '@/components/game/Tutorial';
 
 function GameContent() {
   const searchParams = useSearchParams();
@@ -56,24 +58,8 @@ function GameContent() {
 
   return (
     <main className="bg-underwater min-h-screen flex flex-col items-center pt-4 pb-8 px-2 relative overflow-hidden">
-      {/* Decorative bubbles */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {[...Array(4)].map((_, i) => (
-          <div
-            key={i}
-            className="bubble absolute rounded-full"
-            style={{
-              width: `${6 + i * 3}px`,
-              height: `${6 + i * 3}px`,
-              left: `${20 + i * 20}%`,
-              bottom: '-20px',
-              background: 'radial-gradient(circle at 30% 30%, rgba(100, 200, 255, 0.2), rgba(100, 200, 255, 0.03))',
-              '--bubble-duration': `${7 + i * 2}s`,
-              '--bubble-delay': `${i * 2}s`,
-            } as React.CSSProperties}
-          />
-        ))}
-      </div>
+      <OceanBackground variant="game" />
+      <Tutorial />
 
       {/* Header */}
       <div className="relative z-10 w-full">
@@ -100,9 +86,10 @@ function GameContent() {
       </div>
 
       {/* Controls hint */}
-      <div className="relative z-10 mt-4 flex gap-4 text-xs" style={{ color: 'var(--text-muted)' }}>
+      <div className="relative z-10 mt-4 flex gap-4 items-start text-xs" style={{ color: 'var(--text-muted)' }}>
         <span>R: 재시작</span>
         <span>ESC: 메뉴</span>
+        <DangerLegend />
       </div>
 
       {/* Game Over Modal */}

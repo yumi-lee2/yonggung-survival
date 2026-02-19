@@ -2,7 +2,7 @@
 
 import { memo, useCallback } from 'react';
 import { Tile as TileType } from '@/lib/game/types';
-import { MINE_EMOJIS, FLAG_EMOJI, EXIT_EMOJI, RABBIT_EMOJI, NUMBER_COLORS } from '@/lib/game/constants';
+import { MINE_EMOJIS, FLAG_EMOJI, EXIT_EMOJI, RABBIT_EMOJI, DANGER_EMOJIS } from '@/lib/game/constants';
 
 interface TileProps {
   tile: TileType;
@@ -18,6 +18,10 @@ interface TileProps {
 function getRandomMineEmoji(row: number, col: number): string {
   const index = (row * 7 + col * 13) % MINE_EMOJIS.length;
   return MINE_EMOJIS[index];
+}
+
+function getDangerEmoji(level: number): string {
+  return DANGER_EMOJIS[Math.min(level, DANGER_EMOJIS.length - 1)] || '';
 }
 
 function TileComponent({ tile, isRabbit, isMovable, onClick, onRightClick, revealDelay, mineDelay, gameOver }: TileProps) {
@@ -69,12 +73,8 @@ function TileComponent({ tile, isRabbit, isMovable, onClick, onRightClick, revea
       stateClass = 'tile-revealed tile-exit';
       content = <span className="tile-emoji">{EXIT_EMOJI}</span>;
     } else if (adjacentMines > 0) {
-      stateClass = 'tile-revealed';
-      content = (
-        <span className="tile-number" style={{ color: NUMBER_COLORS[adjacentMines] }}>
-          {adjacentMines}
-        </span>
-      );
+      stateClass = `tile-revealed tile-danger-${adjacentMines}`;
+      content = <span className="tile-emoji">{getDangerEmoji(adjacentMines)}</span>;
     } else {
       stateClass = 'tile-revealed';
     }
@@ -85,11 +85,10 @@ function TileComponent({ tile, isRabbit, isMovable, onClick, onRightClick, revea
 
   // Show adjacent mines hint on movable hidden tiles
   if (isMovable && state === 'hidden' && adjacentMines > 0) {
-    content = (
-      <span className="tile-hint" style={{ color: NUMBER_COLORS[adjacentMines] }}>
-        {adjacentMines}
-      </span>
-    );
+    const emoji = getDangerEmoji(adjacentMines);
+    if (emoji) {
+      content = <span className="tile-hint-emoji">{emoji}</span>;
+    }
   }
 
   // Add rabbit class and movable class

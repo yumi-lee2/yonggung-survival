@@ -7,6 +7,7 @@ import { useHighScores } from '@/hooks/useHighScores';
 import DifficultySelect from '@/components/game/DifficultySelect';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
+import OceanBackground from '@/components/ui/OceanBackground';
 
 export default function MenuPage() {
   const router = useRouter();
@@ -28,36 +29,25 @@ export default function MenuPage() {
 
   return (
     <main className="bg-underwater min-h-screen flex flex-col items-center justify-center px-4 py-8 relative overflow-hidden">
-      {/* Decorative bubbles */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {[...Array(6)].map((_, i) => (
-          <div
-            key={i}
-            className="bubble absolute rounded-full"
-            style={{
-              width: `${8 + i * 4}px`,
-              height: `${8 + i * 4}px`,
-              left: `${15 + i * 15}%`,
-              bottom: '-20px',
-              background: 'radial-gradient(circle at 30% 30%, rgba(100, 200, 255, 0.3), rgba(100, 200, 255, 0.05))',
-              '--bubble-duration': `${6 + i * 2}s`,
-              '--bubble-delay': `${i * 1.5}s`,
-            } as React.CSSProperties}
-          />
-        ))}
-      </div>
+      <OceanBackground variant="menu" />
 
       {/* Title */}
       <div className="text-center mb-10 relative z-10">
-        <div className="text-6xl mb-4">🐰</div>
+        <div className="text-6xl mb-4" style={{ animation: 'emojiBounce 2s ease-in-out infinite' }}>🐰</div>
         <h1
           className="text-4xl sm:text-5xl font-extrabold mb-3"
-          style={{ color: 'var(--text-primary)' }}
+          style={{
+            color: 'var(--text-primary)',
+            textShadow: '0 0 20px rgba(255, 200, 100, 0.3), 0 2px 4px rgba(0,0,0,0.3)',
+          }}
         >
           용궁에서 살아남기
         </h1>
-        <p className="text-base sm:text-lg mb-2" style={{ color: 'var(--text-secondary)' }}>
-          별주부전 3D 지뢰찾기
+        <p
+          className="text-base sm:text-lg mb-2"
+          style={{ color: 'var(--text-secondary)' }}
+        >
+          별주부전 지뢰찾기
         </p>
         <button
           onClick={() => setShowStory(true)}

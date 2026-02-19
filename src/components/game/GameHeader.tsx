@@ -31,9 +31,10 @@ export default function GameHeader({
       <div
         className="flex items-center justify-between gap-4 px-5 py-3 rounded-xl border"
         style={{
-          backgroundColor: 'var(--card-bg)',
+          background: 'linear-gradient(135deg, var(--card-bg), rgba(255,255,255,0.03))',
           borderColor: 'var(--card-border)',
-          backdropFilter: 'blur(8px)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
         }}
       >
         {/* Rabbit + difficulty */}
@@ -52,7 +53,7 @@ export default function GameHeader({
         {/* Remaining mines */}
         <div className="text-center">
           <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
-            남은 심복
+            🐙 남은 심복
           </div>
           <div className="text-xl font-bold tabular-nums" style={{ color: 'var(--text-primary)' }}>
             {remainingMines}
@@ -62,7 +63,7 @@ export default function GameHeader({
         {/* Timer */}
         <div className="text-center">
           <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
-            시간
+            ⏱ 시간
           </div>
           <div
             className={`text-xl font-bold tabular-nums ${isTimeLow ? 'timer-warning' : ''}`}
@@ -75,7 +76,7 @@ export default function GameHeader({
         {/* Score */}
         <div className="text-center">
           <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
-            점수
+            ⭐ 점수
           </div>
           <div className="text-xl font-bold tabular-nums" style={{ color: 'var(--text-primary)' }}>
             {score > 0 ? score : '—'}
@@ -90,6 +91,7 @@ export default function GameHeader({
           style={{
             width: `${progress}%`,
             background: 'linear-gradient(90deg, #4fc3f7, #81c784)',
+            boxShadow: '0 0 8px rgba(79, 195, 247, 0.6)',
           }}
         />
       </div>
