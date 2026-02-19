@@ -8,8 +8,8 @@ export interface Position {
 }
 
 export type ObstacleType = 'turtle' | 'crab' | 'jellyfish' | 'pufferfish' | 'squid' | 'shark';
-export type ItemType = 'shield' | 'lightning' | 'magnet';
-export type CollectibleType = 'pearl' | 'seaweed';
+export type CollectibleType = 'carrot' | 'seaweed';
+export type PowerUpType = 'mushroom' | 'bubble' | 'lightning' | 'vortex' | 'fire' | 'ice' | 'diamond';
 
 export interface GameObject {
   id: number;
@@ -35,9 +35,53 @@ export interface Collectible extends GameObject {
   collected: boolean;
 }
 
-export interface Item extends GameObject {
-  type: ItemType;
+export interface PowerUp extends GameObject {
+  type: PowerUpType;
   collected: boolean;
+}
+
+export interface Projectile extends GameObject {
+  speed: number;
+  big: boolean;
+  pierceLeft: number;
+}
+
+export interface ActiveEffect {
+  type: PowerUpType;
+  remaining: number;
+  duration: number;
+}
+
+export interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+  maxLife: number;
+  color: string;
+  size: number;
+}
+
+export interface ComboState {
+  count: number;
+  timer: number;
+  maxCombo: number;
+}
+
+export interface FeverState {
+  charge: number;
+  active: boolean;
+  timer: number;
+}
+
+export type ZoneName = 'palace' | 'coral' | 'abyss' | 'shark' | 'surface';
+export type WavePhase = 'calm' | 'rising' | 'intense' | 'rest';
+
+export interface WaveState {
+  phaseIndex: number;
+  timer: number;
+  cycle: number;
 }
 
 export interface Player {
@@ -49,11 +93,11 @@ export interface Player {
   dashCooldown: number;
   isDashing: boolean;
   dashTimer: number;
-  heldItem: ItemType | null;
-  shieldActive: boolean;
-  magnetTimer: number;
+  carrots: number;
+  maxCarrots: number;
+  activeEffects: ActiveEffect[];
   score: number;
-  pearls: number;
+  kills: number;
   distance: number;
 }
 
@@ -61,13 +105,21 @@ export interface GameState {
   player: Player;
   obstacles: Obstacle[];
   collectibles: Collectible[];
-  items: Item[];
+  powerUps: PowerUp[];
+  projectiles: Projectile[];
   scrollSpeed: number;
+  baseScrollSpeed: number;
   gameOver: boolean;
   isPaused: boolean;
   highScore: number;
-  /** Visual effects state */
+  combo: ComboState;
+  fever: FeverState;
+  wave: WaveState;
+  currentZone: number;
+  zoneTransitionProgress: number;
+  zoneLabelTimer: number;
   effects: Effects;
+  dashBurstTimer: number;
 }
 
 export interface Effects {
@@ -75,10 +127,55 @@ export interface Effects {
   redFlash: number;
   slowMotion: number;
   dashTrail: Array<{ lane: Lane; y: number; alpha: number }>;
-  floatingTexts: Array<{ text: string; x: number; y: number; alpha: number; vy: number; color: string }>;
+  floatingTexts: Array<{
+    text: string;
+    x: number;
+    y: number;
+    alpha: number;
+    vy: number;
+    color: string;
+    size?: number;
+  }>;
+  particles: Particle[];
 }
 
 export interface GameCallbacks {
-  onGameOver: (distance: number, pearls: number) => void;
-  onScoreUpdate: (distance: number, pearls: number, hp: number, item: ItemType | null, dashCooldown: number) => void;
+  onGameOver: (data: GameOverData) => void;
+  onScoreUpdate: (data: HUDData) => void;
+}
+
+export interface HUDData {
+  distance: number;
+  score: number;
+  hp: number;
+  maxHp: number;
+  carrots: number;
+  maxCarrots: number;
+  dashCooldown: number;
+  combo: number;
+  comboMultiplier: number;
+  feverCharge: number;
+  feverActive: boolean;
+  activeEffects: ActiveEffect[];
+  zoneName: string;
+  kills: number;
+}
+
+export interface GameOverData {
+  distance: number;
+  score: number;
+  kills: number;
+  maxCombo: number;
+  zoneName: string;
+  highScore: number;
+  isNewRecord: boolean;
+}
+
+// === Save Data ===
+export type UpgradeId = 'hp' | 'carrotPouch' | 'pierce' | 'feverCharge' | 'startShield' | 'fastCarrot';
+
+export interface SaveData {
+  totalScore: number;
+  highScore: number;
+  upgrades: Record<UpgradeId, number>;
 }

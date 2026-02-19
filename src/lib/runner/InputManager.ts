@@ -1,7 +1,7 @@
 import { Lane } from './types';
 import { LANE_COUNT } from './constants';
 
-export type InputAction = 'left' | 'right' | 'dash' | 'useItem';
+export type InputAction = 'left' | 'right' | 'dash';
 
 type InputCallback = (action: InputAction) => void;
 
@@ -62,12 +62,6 @@ export class InputManager {
         e.preventDefault();
         this.emit('dash');
         break;
-      case 'f':
-      case 'F':
-      case 'Enter':
-        e.preventDefault();
-        this.emit('useItem');
-        break;
     }
   }
 
@@ -103,14 +97,13 @@ export class InputManager {
       const rect = this.element.getBoundingClientRect();
       const relX = touch.clientX - rect.left;
       const mid = rect.width / 2;
-      // Tap top area = use item
       const relY = touch.clientY - rect.top;
+      // Top area tap = dash
       if (relY < rect.height * 0.3) {
-        this.emit('useItem');
+        this.emit('dash');
       } else {
         this.emit(relX < mid ? 'left' : 'right');
       }
     }
   }
 }
-

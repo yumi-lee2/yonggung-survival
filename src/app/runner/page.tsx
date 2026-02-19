@@ -32,7 +32,7 @@ export default function RunnerPage() {
                 탭하여 시작
               </p>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>
-                ←→ 이동 · Space 대시 · F 아이템
+                ←→ 이동+공격 · Space 대시
               </p>
             </div>
           </div>
@@ -43,6 +43,7 @@ export default function RunnerPage() {
             state={gameOver}
             onRestart={restart}
             onMenu={() => router.push('/')}
+            onShop={() => router.push('/shop')}
           />
         )}
       </div>
