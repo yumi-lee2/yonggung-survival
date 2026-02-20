@@ -242,9 +242,6 @@ export class GameEngine {
     const p = this.state.player;
     const clampedLane = Math.max(0, Math.min(LANE_COUNT - 1, Math.round(lane))) as Lane;
 
-    // Can't fire during bubble effect
-    if (this.hasEffect('bubble')) return;
-
     // Check ammo (fever = infinite ammo)
     if (!this.state.fever.active) {
       if (p.carrots <= 0) return;
@@ -257,6 +254,7 @@ export class GameEngine {
       y: PLAYER_Y - 20,
       speed: this.state.scrollSpeed * this.carrotSpeedMult,
       big: this.hasEffect('mushroom'),
+      small: this.hasEffect('bubble'),
       pierceLeft: Math.random() < this.pierceChance ? 1 : 0,
       width: OBJECT_SIZE * 0.5,
       height: OBJECT_SIZE * 0.5,
@@ -726,6 +724,41 @@ export class GameEngine {
             collected: false,
           });
         }
+      }
+
+      // Size potion drops: mushroom 0~2, bubble 0~2
+      const mushroomCount = Math.floor(Math.random() * 3);
+      const bubbleCount = Math.floor(Math.random() * 3);
+      let potionIndex = 0;
+      for (let i = 0; i < mushroomCount; i++) {
+        const potionLane = Math.floor(Math.random() * LANE_COUNT) as Lane;
+        const potionY = PLAYER_Y - 200 - potionIndex * 50;
+        s.powerUps.push({
+          id: Date.now() + potionIndex + 100,
+          type: 'mushroom',
+          lane: potionLane,
+          y: potionY,
+          width: OBJECT_SIZE * 0.7,
+          height: OBJECT_SIZE * 0.7,
+          active: true,
+          collected: false,
+        });
+        potionIndex++;
+      }
+      for (let i = 0; i < bubbleCount; i++) {
+        const potionLane = Math.floor(Math.random() * LANE_COUNT) as Lane;
+        const potionY = PLAYER_Y - 200 - potionIndex * 50;
+        s.powerUps.push({
+          id: Date.now() + potionIndex + 200,
+          type: 'bubble',
+          lane: potionLane,
+          y: potionY,
+          width: OBJECT_SIZE * 0.7,
+          height: OBJECT_SIZE * 0.7,
+          active: true,
+          collected: false,
+        });
+        potionIndex++;
       }
 
       // Floating reward banner

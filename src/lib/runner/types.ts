@@ -43,6 +43,7 @@ export interface PowerUp extends GameObject {
 export interface Projectile extends GameObject {
   speed: number;
   big: boolean;
+  small?: boolean;
   pierceLeft: number;
 }
 

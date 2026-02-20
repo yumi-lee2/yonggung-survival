@@ -43,9 +43,9 @@ export function checkCollisions(
   // Player hitbox varies by active effect
   let playerHitbox = OBJECT_SIZE * 0.7;
   if (hasMushroomEffect) {
-    playerHitbox = OBJECT_SIZE * 1.4;
+    playerHitbox = OBJECT_SIZE * 2.0;
   } else if (hasBubbleEffect) {
-    playerHitbox = OBJECT_SIZE * 0.35;
+    playerHitbox = OBJECT_SIZE * 0.5;
   }
 
   const result: CollisionResult = {
@@ -62,7 +62,7 @@ export function checkCollisions(
   for (const proj of projectiles) {
     if (!proj.active) continue;
     const projX = laneToX(proj.lane);
-    const projHitbox = proj.big ? OBJECT_SIZE * 1.0 : OBJECT_SIZE * 0.5;
+    const projHitbox = proj.big ? OBJECT_SIZE * 1.5 : proj.small ? OBJECT_SIZE * 0.3 : OBJECT_SIZE * 0.5;
 
     for (const obs of obstacles) {
       if (!obs.active) continue;

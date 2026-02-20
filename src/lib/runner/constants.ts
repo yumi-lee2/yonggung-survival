@@ -237,4 +237,4 @@ export const ZONE_REWARD_CARROT_REFILL = 5;
 export const ZONE_REWARD_POWERUP = true;
 
 // === Carrot Drop (Sky) ===
-export const CARROT_DROP_INTERVAL = 1.33;
+export const CARROT_DROP_INTERVAL = 0.665;

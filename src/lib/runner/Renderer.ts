@@ -1,4 +1,4 @@
-import { GameState, Lane } from './types';
+import { GameState, Lane, Projectile } from './types';
 import {
   CANVAS_WIDTH, CANVAS_HEIGHT, LANE_COUNT, LANE_WIDTH,
   PLAYER_Y, OBJECT_SIZE, BLINK_RATE,
@@ -199,7 +199,9 @@ export class Renderer {
       const cx = c.lane * LANE_WIDTH + LANE_WIDTH / 2;
       if (c.type === 'carrot') {
         const bob = Math.sin(this.time * 3 + c.id) * 3;
-        this.drawEmoji(CARROT_EMOJI, cx, c.y + bob, OBJECT_SIZE * 0.6);
+        const hasMushroom = state.player.activeEffects.some(e => e.type === 'mushroom' && e.remaining > 0);
+        const carrotSize = hasMushroom ? OBJECT_SIZE * 0.9 : OBJECT_SIZE * 0.6;
+        this.drawEmoji(CARROT_EMOJI, cx, c.y + bob, carrotSize);
       } else {
         // seaweed: slight sway
         const ctx = this.ctx;
@@ -244,7 +246,7 @@ export class Renderer {
     for (const proj of state.projectiles) {
       if (!proj.active) continue;
       const px = proj.lane * LANE_WIDTH + LANE_WIDTH / 2;
-      const size = proj.big ? OBJECT_SIZE * 1.0 : OBJECT_SIZE * 0.5;
+      const size = proj.big ? OBJECT_SIZE * 1.5 : proj.small ? OBJECT_SIZE * 0.3 : OBJECT_SIZE * 0.5;
 
       // Trail (2 fading copies below)
       for (let t = 1; t <= 2; t++) {
@@ -336,14 +338,14 @@ export class Renderer {
     // Mushroom: larger, slight glow
     let playerSize = OBJECT_SIZE;
     if (hasEffect('mushroom')) {
-      playerSize = OBJECT_SIZE * 1.5;
+      playerSize = OBJECT_SIZE * 2.0;
       ctx.shadowColor = 'rgba(255, 100, 100, 0.5)';
       ctx.shadowBlur = 10;
     }
 
     // Bubble: smaller
     if (hasEffect('bubble')) {
-      playerSize = OBJECT_SIZE * 0.7;
+      playerSize = OBJECT_SIZE * 0.5;
     }
 
     // Fire: fire particles around player
