@@ -84,31 +84,13 @@
   font-weight: 400;
 }
 
-.hud-dash {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.hud-dash-bar {
-  width: 40px;
-  height: 5px;
-  background: rgba(50, 80, 120, 0.5);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.hud-dash-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #4af, #8df);
-  border-radius: 3px;
-  transition: width 0.1s linear;
-}
-
-.hud-dash-label {
-  font-size: 0.6rem;
-  color: var(--text-muted);
-}
+/* === Fever Gauge === */
+.hud-fever { width: 100%; }
+.hud-fever-bar { width: 100%; height: 6px; background: rgba(50,80,120,0.4); border-radius: 3px; overflow: hidden; }
+.hud-fever-fill { height: 100%; background: linear-gradient(90deg, #f59e0b, #ef4444, #f59e0b); border-radius: 3px; transition: width 0.2s ease; background-size: 200% 100%; animation: feverShimmer 1s linear infinite; }
+.hud-fever-fill.active { background: linear-gradient(90deg, #ffd700, #ff6b35, #ff0080, #ffd700); animation: feverRainbow 0.5s linear infinite; }
+@keyframes feverShimmer { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
+@keyframes feverRainbow { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
 
 /* === Score === */
 .hud-score { font-weight: 700; color: #ffd700; display: flex; align-items: center; gap: 3px; font-size: 0.9rem; }
@@ -117,18 +99,6 @@
 .hud-carrots { font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 3px; color: #ff9f43; }
 .hud-carrots.low { color: #ff4444; animation: carrotPulse 0.5s ease-in-out infinite; }
 @keyframes carrotPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-/* === Fever Bar === */
-.hud-fever { width: 100%; margin-top: 4px; }
-.hud-fever-bar { width: 100%; height: 6px; background: rgba(50,80,120,0.4); border-radius: 3px; overflow: hidden; position: relative; }
-.hud-fever-fill { height: 100%; background: linear-gradient(90deg, #f59e0b, #ef4444, #f59e0b); border-radius: 3px; transition: width 0.2s ease; background-size: 200% 100%; animation: feverShimmer 1s linear infinite; }
-.hud-fever-fill.active { background: linear-gradient(90deg, #ffd700, #ff6b35, #ff0080, #ffd700); animation: feverRainbow 0.5s linear infinite; }
-@keyframes feverShimmer { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
-@keyframes feverRainbow { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
-.hud-fever-text { font-size: 0.6rem; color: #ffd700; font-weight: 700; text-align: center; margin-top: 1px; }
-
-/* === Zone === */
-.hud-zone { font-size: 0.65rem; color: var(--text-muted); text-align: right; }
 
 /* === Kills === */
 .hud-kills { font-size: 0.85rem; color: #ff6b6b; font-weight: 600; display: flex; align-items: center; gap: 2px; }
