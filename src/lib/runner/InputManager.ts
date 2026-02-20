@@ -1,7 +1,7 @@
 import { Lane } from './types';
 import { LANE_COUNT } from './constants';
 
-export type InputAction = 'left' | 'right' | 'dash';
+export type InputAction = 'left' | 'right';
 
 type InputCallback = (action: InputAction) => void;
 
@@ -57,11 +57,6 @@ export class InputManager {
         e.preventDefault();
         this.emit('right');
         break;
-      case 'ArrowUp':
-      case ' ':
-        e.preventDefault();
-        this.emit('dash');
-        break;
     }
   }
 
@@ -82,10 +77,7 @@ export class InputManager {
 
     // Swipe detection
     if (absDx > 30 || absDy > 30) {
-      if (absDy > absDx && dy < -30) {
-        // Swipe up = dash
-        this.emit('dash');
-      } else if (absDx > absDy) {
+      if (absDx > absDy) {
         this.emit(dx < 0 ? 'left' : 'right');
       }
       return;
@@ -97,13 +89,7 @@ export class InputManager {
       const rect = this.element.getBoundingClientRect();
       const relX = touch.clientX - rect.left;
       const mid = rect.width / 2;
-      const relY = touch.clientY - rect.top;
-      // Top area tap = dash
-      if (relY < rect.height * 0.3) {
-        this.emit('dash');
-      } else {
-        this.emit(relX < mid ? 'left' : 'right');
-      }
+      this.emit(relX < mid ? 'left' : 'right');
     }
   }
 }

@@ -5,8 +5,6 @@ import {
 import {
   LANE_COUNT, PLAYER_Y, OBJECT_SIZE, LANE_WIDTH, CANVAS_HEIGHT,
   INITIAL_SPEED, MAX_SPEED, SPEED_RAMP_RATE,
-  DASH_DURATION, DASH_COOLDOWN,
-  DASH_BURST_INTERVAL, DASH_BURST_COUNT,
   INVINCIBLE_DURATION,
   OBSTACLE_CONFIGS,
   CLOSE_CALL_BONUS, CLOSE_CALL_THRESHOLD,
@@ -18,6 +16,8 @@ import {
   ZONES, WAVE_PATTERN,
   OBSTACLE_PARTICLE_COLORS,
   SLOWMO_DURATION, SLOWMO_FACTOR,
+  POWERUP_CONFIGS,
+  ZONE_REWARD_HP_RESTORE, ZONE_REWARD_CARROT_REFILL, ZONE_REWARD_POWERUP,
 } from './constants';
 import { InputManager, InputAction } from './InputManager';
 import { SpawnScheduler } from './SpawnScheduler';
@@ -50,10 +50,6 @@ export class GameEngine {
   // Auto-fire timers
   private feverFireTimer = 0;
   private fireEffectTimer = 0;
-
-  // Dash burst tracking
-  private dashBurstAccum = 0;
-  private dashBurstShotsFired = 0;
 
   // Distance milestones
   private lastMilestone = 0;
@@ -132,8 +128,6 @@ export class GameEngine {
     this.closeCalled.clear();
     this.feverFireTimer = 0;
     this.fireEffectTimer = 0;
-    this.dashBurstAccum = 0;
-    this.dashBurstShotsFired = 0;
     this.lastMilestone = 0;
     projectileId = 10000;
 
@@ -238,18 +232,6 @@ export class GameEngine {
         this.fireCarrot(p.lane);
         break;
       }
-      case 'dash':
-        if (p.dashCooldown <= 0 && !p.isDashing) {
-          p.isDashing = true;
-          p.dashTimer = DASH_DURATION;
-          p.dashCooldown = DASH_COOLDOWN;
-          p.invincibleTimer = Math.max(p.invincibleTimer, DASH_DURATION);
-          this.state.dashBurstTimer = DASH_DURATION;
-          this.dashBurstAccum = 0;
-          this.dashBurstShotsFired = 0;
-          this.onSfx?.('dash');
-        }
-        break;
       // useItem removed -- items are auto-applied now
     }
   }
@@ -320,9 +302,18 @@ export class GameEngine {
     p.score += killScore;
     p.kills++;
 
-    // Refill a carrot on kill (not during fever, since ammo is infinite then)
+    // Instant carrot refill on kill (not during fever)
     if (!s.fever.active && fromProjectile) {
-      p.carrots = Math.min(this.maxCarrots, p.carrots + 1);
+      p.carrots = Math.min(this.maxCarrots, p.carrots + CARROT_REFILL_AMOUNT);
+      eff.floatingTexts.push({
+        text: '+🥕',
+        x: obs.lane * LANE_WIDTH + LANE_WIDTH / 2,
+        y: obs.y - 20,
+        alpha: 1,
+        vy: -50,
+        color: '#ff8c00',
+        size: 14,
+      });
     }
 
     // Combo
@@ -442,37 +433,10 @@ export class GameEngine {
     if (eff.screenShake > 0) eff.screenShake -= dt;
     if (eff.redFlash > 0) eff.redFlash -= dt;
 
-    // --- Dash ---
-    if (p.isDashing) {
-      p.dashTimer -= dt;
-      eff.dashTrail.push({ lane: p.lane, y: PLAYER_Y, alpha: 1 });
-      if (p.dashTimer <= 0) {
-        p.isDashing = false;
-      }
-    }
-
-    // Fade dash trail
+    // Fade dash trail (legacy, kept for renderer compatibility)
     for (let i = eff.dashTrail.length - 1; i >= 0; i--) {
       eff.dashTrail[i].alpha -= dt * 4;
       if (eff.dashTrail[i].alpha <= 0) eff.dashTrail.splice(i, 1);
-    }
-
-    // --- Dash burst ---
-    if (s.dashBurstTimer > 0) {
-      this.dashBurstAccum += dt;
-      while (
-        this.dashBurstAccum >= DASH_BURST_INTERVAL &&
-        this.dashBurstShotsFired < DASH_BURST_COUNT
-      ) {
-        this.dashBurstAccum -= DASH_BURST_INTERVAL;
-        this.dashBurstShotsFired++;
-        const burstLane = Math.floor(Math.random() * LANE_COUNT) as Lane;
-        this.fireCarrot(burstLane);
-      }
-      s.dashBurstTimer -= dt;
-      if (s.dashBurstTimer <= 0) {
-        s.dashBurstTimer = 0;
-      }
     }
 
     // --- Fever auto-fire ---
@@ -706,6 +670,74 @@ export class GameEngine {
       s.zoneTransitionProgress = 1;
       s.zoneLabelTimer = 2.5;
       this.onSfx?.('zoneChange');
+
+      // --- Zone transition reward ---
+      const px = p.lane * LANE_WIDTH + LANE_WIDTH / 2;
+
+      // HP restore
+      if (p.hp < p.maxHp) {
+        p.hp = Math.min(p.maxHp, p.hp + ZONE_REWARD_HP_RESTORE);
+        eff.floatingTexts.push({
+          text: '+\u2764\uFE0F',
+          x: px - 30,
+          y: PLAYER_Y - 60,
+          alpha: 1,
+          vy: -50,
+          color: '#ff6b6b',
+          size: 18,
+        });
+      }
+
+      // Carrot refill
+      p.carrots = Math.min(this.maxCarrots, p.carrots + ZONE_REWARD_CARROT_REFILL);
+      eff.floatingTexts.push({
+        text: `+${ZONE_REWARD_CARROT_REFILL}\uD83E\uDD55`,
+        x: px,
+        y: PLAYER_Y - 80,
+        alpha: 1,
+        vy: -50,
+        color: '#ff8c00',
+        size: 18,
+      });
+
+      // Random power-up drop
+      if (ZONE_REWARD_POWERUP) {
+        const eligible = POWERUP_CONFIGS.filter(c => p.distance >= c.minDistance);
+        if (eligible.length > 0) {
+          const totalWeight = eligible.reduce((sum, c) => sum + c.rarity, 0);
+          let roll = Math.random() * totalWeight;
+          let selected = eligible[0];
+          for (const config of eligible) {
+            roll -= config.rarity;
+            if (roll <= 0) {
+              selected = config;
+              break;
+            }
+          }
+          // Drop power-up slightly ahead of the player
+          s.powerUps.push({
+            id: Date.now(),
+            type: selected.type,
+            lane: p.lane,
+            y: PLAYER_Y - 150,
+            width: OBJECT_SIZE * 0.7,
+            height: OBJECT_SIZE * 0.7,
+            active: true,
+            collected: false,
+          });
+        }
+      }
+
+      // Floating reward banner
+      eff.floatingTexts.push({
+        text: '\uD83C\uDF81 \uBCF4\uAE09!',
+        x: LANE_WIDTH * 2.5,
+        y: PLAYER_Y - 110,
+        alpha: 1,
+        vy: -40,
+        color: '#00ff88',
+        size: 24,
+      });
     }
 
     // Zone transition fade

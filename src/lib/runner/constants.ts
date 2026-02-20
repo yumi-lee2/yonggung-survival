@@ -8,29 +8,22 @@ export const LANE_WIDTH = CANVAS_WIDTH / LANE_COUNT; // 80px
 export const PLAYER_Y = CANVAS_HEIGHT - 100;
 export const OBJECT_SIZE = 40;
 
-// === Movement ===
-export const DASH_DURATION = 0.3;
-export const DASH_COOLDOWN = 2.0;
-export const DASH_DISTANCE = 40;
-
 // === Scroll Speed ===
-export const INITIAL_SPEED = 120;
-export const MAX_SPEED = 350;
-export const SPEED_RAMP_RATE = 0.5;
+export const INITIAL_SPEED = 220;
+export const MAX_SPEED = 550;
+export const SPEED_RAMP_RATE = 3.0;
 
 // === HP ===
 export const MAX_HP = 3;
-export const INVINCIBLE_DURATION = 1.5;
+export const INVINCIBLE_DURATION = 0.6;
 export const BLINK_RATE = 8;
 
 // === Carrots (Projectiles) ===
 export const START_CARROTS = 5;
 export const MAX_CARROTS = 10;
 export const CARROT_SPEED_MULTIPLIER = 3;
-export const CARROT_REFILL_AMOUNT = 3;
+export const CARROT_REFILL_AMOUNT = 1;
 export const CARROT_EMOJI = '🥕';
-export const DASH_BURST_INTERVAL = 0.05;
-export const DASH_BURST_COUNT = 6;
 
 // === Kill Scores ===
 export const KILL_SCORES: Record<ObstacleType, number> = {
@@ -52,21 +45,19 @@ export interface ObstacleConfig {
 }
 
 export const OBSTACLE_CONFIGS: ObstacleConfig[] = [
-  { type: 'turtle', emoji: '🐢', minDistance: 0, baseInterval: 1.5, speed: 1.0 },
-  { type: 'crab', emoji: '🦀', minDistance: 200, baseInterval: 2.5, speed: 1.0 },
-  { type: 'jellyfish', emoji: '🪼', minDistance: 500, baseInterval: 3.0, speed: 0.7 },
-  { type: 'pufferfish', emoji: '🐡', minDistance: 1000, baseInterval: 4.0, speed: 0.8 },
-  { type: 'squid', emoji: '🦑', minDistance: 2000, baseInterval: 5.0, speed: 1.2 },
-  { type: 'shark', emoji: '🦈', minDistance: 3000, baseInterval: 6.0, speed: 1.5 },
+  { type: 'turtle', emoji: '🐢', minDistance: 0, baseInterval: 1.2, speed: 0.6 },
+  { type: 'crab', emoji: '🦀', minDistance: 40, baseInterval: 1.2, speed: 1.0 },
+  { type: 'jellyfish', emoji: '🪼', minDistance: 100, baseInterval: 1.5, speed: 0.7 },
+  { type: 'pufferfish', emoji: '🐡', minDistance: 200, baseInterval: 2.0, speed: 0.8 },
+  { type: 'squid', emoji: '🦑', minDistance: 400, baseInterval: 2.5, speed: 1.2 },
+  { type: 'shark', emoji: '🦈', minDistance: 800, baseInterval: 3.5, speed: 1.5 },
 ];
 
 // === Collectibles ===
 export const SEAWEED_EMOJI = '🌿';
-export const CARROT_SPAWN_INTERVAL = 1.5;
-export const SEAWEED_SPAWN_DISTANCE = 800;
 
 // === Combo ===
-export const COMBO_TIMEOUT = 3.0;
+export const COMBO_TIMEOUT = 1.5;
 export const COMBO_TIERS = [
   { threshold: 5, multiplier: 2, label: 'NICE!' },
   { threshold: 10, multiplier: 3, label: 'GREAT!' },
@@ -92,13 +83,13 @@ export interface PowerUpConfig {
 }
 
 export const POWERUP_CONFIGS: PowerUpConfig[] = [
-  { type: 'mushroom', emoji: '🍄', minDistance: 300, duration: 5, rarity: 10 },
-  { type: 'bubble', emoji: '🫧', minDistance: 500, duration: 4, rarity: 10 },
-  { type: 'lightning', emoji: '⚡', minDistance: 800, duration: 0, rarity: 8 },
-  { type: 'vortex', emoji: '🌀', minDistance: 1200, duration: 3, rarity: 6 },
-  { type: 'fire', emoji: '🔥', minDistance: 1500, duration: 5, rarity: 6 },
-  { type: 'ice', emoji: '🧊', minDistance: 2000, duration: 4, rarity: 7 },
-  { type: 'diamond', emoji: '💎', minDistance: 3000, duration: 8, rarity: 2 },
+  { type: 'mushroom', emoji: '🍄', minDistance: 150, duration: 5, rarity: 10 },
+  { type: 'bubble', emoji: '🫧', minDistance: 250, duration: 4, rarity: 10 },
+  { type: 'lightning', emoji: '⚡', minDistance: 400, duration: 0, rarity: 8 },
+  { type: 'vortex', emoji: '🌀', minDistance: 600, duration: 3, rarity: 6 },
+  { type: 'fire', emoji: '🔥', minDistance: 800, duration: 5, rarity: 6 },
+  { type: 'ice', emoji: '🧊', minDistance: 1000, duration: 4, rarity: 7 },
+  { type: 'diamond', emoji: '💎', minDistance: 1500, duration: 8, rarity: 2 },
 ];
 
 // === Zones ===
@@ -118,21 +109,21 @@ export const ZONES: ZoneConfig[] = [
     emoji: '🏯',
     startDistance: 0,
     bgColors: ['#1a3a6a', '#15305a', '#0f254a', '#0a1628'],
-    obstacleWeights: { turtle: 10, crab: 5 },
+    obstacleWeights: { turtle: 5, crab: 5 },
   },
   {
     name: 'coral',
     label: '산호초 숲',
     emoji: '🪸',
-    startDistance: 1000,
+    startDistance: 200,
     bgColors: ['#1a6a5a', '#156050', '#0f4a3a', '#0a2820'],
-    obstacleWeights: { turtle: 3, crab: 8, jellyfish: 8 },
+    obstacleWeights: { turtle: 2, crab: 8, jellyfish: 8 },
   },
   {
     name: 'abyss',
     label: '심해 해구',
     emoji: '🌊',
-    startDistance: 2500,
+    startDistance: 500,
     bgColors: ['#2a1a5a', '#20154a', '#150f3a', '#0a0828'],
     obstacleWeights: { crab: 3, jellyfish: 5, pufferfish: 8, squid: 6 },
   },
@@ -140,7 +131,7 @@ export const ZONES: ZoneConfig[] = [
     name: 'shark',
     label: '상어 영역',
     emoji: '🦈',
-    startDistance: 4000,
+    startDistance: 1000,
     bgColors: ['#5a1a1a', '#4a1515', '#3a0f0f', '#280a0a'],
     obstacleWeights: { pufferfish: 4, squid: 8, shark: 8 },
   },
@@ -148,9 +139,9 @@ export const ZONES: ZoneConfig[] = [
     name: 'surface',
     label: '수면 근처',
     emoji: '☀️',
-    startDistance: 6000,
+    startDistance: 1800,
     bgColors: ['#5B9BD5', '#4a8ac5', '#3a7ab5', '#2a6a8a'],
-    obstacleWeights: { turtle: 4, crab: 6, jellyfish: 6, pufferfish: 6, squid: 8, shark: 8 },
+    obstacleWeights: { turtle: 2, crab: 6, jellyfish: 6, pufferfish: 6, squid: 8, shark: 8 },
   },
 ];
 
@@ -163,10 +154,10 @@ export interface WavePhaseConfig {
 }
 
 export const WAVE_PATTERN: WavePhaseConfig[] = [
-  { phase: 'calm', duration: 8, spawnMultiplier: 0.7, speedMultiplier: 0.9 },
-  { phase: 'rising', duration: 5, spawnMultiplier: 1.0, speedMultiplier: 1.0 },
-  { phase: 'intense', duration: 6, spawnMultiplier: 1.8, speedMultiplier: 1.15 },
-  { phase: 'rest', duration: 4, spawnMultiplier: 0.3, speedMultiplier: 0.85 },
+  { phase: 'calm', duration: 2, spawnMultiplier: 0.9, speedMultiplier: 0.95 },
+  { phase: 'rising', duration: 3, spawnMultiplier: 1.3, speedMultiplier: 1.1 },
+  { phase: 'intense', duration: 4, spawnMultiplier: 2.5, speedMultiplier: 1.3 },
+  { phase: 'rest', duration: 1, spawnMultiplier: 0.5, speedMultiplier: 0.9 },
 ];
 
 // === Close Call ===
@@ -240,5 +231,10 @@ export const UPGRADE_CONFIGS: UpgradeConfig[] = [
   },
 ];
 
-// === Power-Up Spawn ===
-export const POWERUP_SPAWN_INTERVAL = 800;
+// === Zone Transition Reward ===
+export const ZONE_REWARD_HP_RESTORE = 1;
+export const ZONE_REWARD_CARROT_REFILL = 5;
+export const ZONE_REWARD_POWERUP = true;
+
+// === Carrot Drop (Sky) ===
+export const CARROT_DROP_INTERVAL = 1.33;
