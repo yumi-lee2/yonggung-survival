@@ -10,7 +10,7 @@ const notoSansKR = Noto_Sans_KR({
 
 export const metadata: Metadata = {
   title: "테스트용",
-  description: "별주부전을 모티브로 한 러너 게임. 용왕의 심복들을 피해 수면까지 도망치세요!",
+  description: "테스트",
   keywords: ["러너", "별주부전", "용궁", "게임", "아케이드"],
   openGraph: {
     title: "테스트용",
