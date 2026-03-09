@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>달 육성소 - Game Design Document</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #0a0a1a;
+    color: #e0e0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ========== COVER ========== */
+  .cover {
+    width: 1440px;
+    min-height: 900px;
+    background: linear-gradient(170deg, #0a0a2e 0%, #1a1a4e 30%, #0d1b3e 60%, #0a2a3a 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 80px;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,200,255,0.08) 0%, transparent 70%);
+  }
+
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    left: -50px;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(100,180,255,0.06) 0%, transparent 70%);
+  }
+
+  .stars {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      radial-gradient(1px 1px at 100px 50px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1px 1px at 300px 150px, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1.5px 1.5px at 500px 80px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 700px 200px, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 900px 100px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 1100px 180px, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 200px 300px, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 800px 400px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 1200px 350px, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 400px 500px, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1.5px 1.5px at 1000px 450px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 150px 600px, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 650px 550px, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 1300px 500px, rgba(255,255,255,0.5), transparent);
+  }
+
+  .cover-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  .cover-label {
+    font-size: 14px;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: rgba(180,200,255,0.6);
+    margin-bottom: 40px;
+  }
+
+  .cover-title {
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 1.2;
+    background: linear-gradient(135deg, #c8d8ff 0%, #7eb8ff 50%, #a0d0ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 24px;
+  }
+
+  .cover-subtitle {
+    font-size: 22px;
+    font-weight: 300;
+    color: rgba(180,200,255,0.7);
+    margin-bottom: 60px;
+    line-height: 1.6;
+  }
+
+  .cover-meta {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+  }
+
+  .cover-meta-item {
+    text-align: center;
+  }
+
+  .cover-meta-item .label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: rgba(180,200,255,0.4);
+    margin-bottom: 8px;
+  }
+
+  .cover-meta-item .value {
+    font-size: 16px;
+    color: rgba(200,220,255,0.8);
+  }
+
+  /* ========== PAGE BASE ========== */
+  .page {
+    width: 1440px;
+    min-height: 900px;
+    padding: 80px 100px;
+    position: relative;
+  }
+
+  .page-dark {
+    background: linear-gradient(180deg, #0d0d24 0%, #111133 100%);
+  }
+
+  .page-blue {
+    background: linear-gradient(180deg, #0a1628 0%, #0d1f3a 100%);
+  }
+
+  .page-deep {
+    background: linear-gradient(180deg, #080820 0%, #0a1230 100%);
+  }
+
+  .page-number {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: rgba(150,170,220,0.3);
+  }
+
+  .section-label {
+    font-size: 12px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #5a8aff;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: 42px;
+    font-weight: 900;
+    color: #d0dfff;
+    margin-bottom: 12px;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .section-desc {
+    font-size: 16px;
+    color: rgba(180,200,255,0.5);
+    margin-bottom: 48px;
+    line-height: 1.7;
+    max-width: 700px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .divider {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #5a8aff, transparent);
+    margin-bottom: 48px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ========== CARDS ========== */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .card-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(100,140,255,0.1);
+    border-radius: 16px;
+    padding: 32px;
+    transition: all 0.3s;
+  }
+
+  .card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .card-icon.blue { background: rgba(90,138,255,0.15); }
+  .card-icon.purple { background: rgba(160,100,255,0.15); }
+  .card-icon.teal { background: rgba(80,200,200,0.15); }
+  .card-icon.pink { background: rgba(255,100,150,0.15); }
+  .card-icon.amber { background: rgba(255,180,50,0.15); }
+  .card-icon.green { background: rgba(80,200,120,0.15); }
+
+  .card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #c0d0ff;
+    margin-bottom: 12px;
+  }
+
+  .card p {
+    font-size: 14px;
+    color: rgba(180,200,255,0.5);
+    line-height: 1.7;
+  }
+
+  /* ========== FLOW DIAGRAM ========== */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    justify-content: center;
+    margin: 48px 0;
+  }
+
+  .flow-node {
+    background: rgba(90,138,255,0.1);
+    border: 1px solid rgba(90,138,255,0.25);
+    border-radius: 16px;
+    padding: 24px 28px;
+    text-align: center;
+    min-width: 140px;
+  }
+
+  .flow-node .icon { font-size: 28px; margin-bottom: 8px; }
+  .flow-node .name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #b0c8ff;
+    margin-bottom: 4px;
+  }
+  .flow-node .desc {
+    font-size: 11px;
+    color: rgba(180,200,255,0.4);
+  }
+
+  .flow-arrow {
+    font-size: 20px;
+    color: rgba(90,138,255,0.4);
+    padding: 0 12px;
+  }
+
+  /* ========== CHARACTER CARDS ========== */
+  .char-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(100,140,255,0.1);
+    border-radius: 20px;
+    padding: 40px;
+    display: flex;
+    gap: 32px;
+    margin-bottom: 24px;
+  }
+
+  .char-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    flex-shrink: 0;
+  }
+
+  .char-info h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #c0d0ff;
+    margin-bottom: 8px;
+  }
+
+  .char-info .role {
+    font-size: 13px;
+    color: #5a8aff;
+    margin-bottom: 12px;
+  }
+
+  .char-info p {
+    font-size: 14px;
+    color: rgba(180,200,255,0.5);
+    line-height: 1.7;
+  }
+
+  .char-traits {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .trait {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(90,138,255,0.1);
+    color: rgba(160,190,255,0.7);
+    border: 1px solid rgba(90,138,255,0.15);
+  }
+
+  /* ========== STAT BARS ========== */
+  .stat-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 32px;
+  }
+
+  .stat-item {
+    background: rgba(255,255,255,0.02);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+
+  .stat-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .stat-name {
+    font-size: 14px;
+    color: #b0c0e0;
+    font-weight: 500;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: rgba(180,200,255,0.4);
+  }
+
+  .stat-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .stat-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+
+  .stat-bar-fill.blue { background: linear-gradient(90deg, #3a6aff, #5a9aff); }
+  .stat-bar-fill.purple { background: linear-gradient(90deg, #7a4aff, #a070ff); }
+  .stat-bar-fill.teal { background: linear-gradient(90deg, #2a9a9a, #50c8c8); }
+  .stat-bar-fill.pink { background: linear-gradient(90deg, #ff4a7a, #ff80a0); }
+  .stat-bar-fill.amber { background: linear-gradient(90deg, #dda020, #ffb840); }
+  .stat-bar-fill.green { background: linear-gradient(90deg, #30a050, #60d080); }
+
+  /* ========== JOB TABLE ========== */
+  .job-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+  }
+
+  .job-table th {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: rgba(150,170,220,0.4);
+    text-align: left;
+    padding: 0 16px 16px;
+    text-transform: uppercase;
+  }
+
+  .job-table td {
+    padding: 16px;
+    background: rgba(255,255,255,0.02);
+    font-size: 14px;
+    color: rgba(200,215,255,0.7);
+    line-height: 1.5;
+  }
+
+  .job-table tr td:first-child { border-radius: 12px 0 0 12px; }
+  .job-table tr td:last-child { border-radius: 0 12px 12px 0; }
+
+  .job-name {
+    font-weight: 700;
+    color: #b0c8ff;
+  }
+
+  .job-req {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .job-req span {
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    background: rgba(90,138,255,0.1);
+    color: rgba(150,180,255,0.6);
+  }
+
+  /* ========== TIMELINE ========== */
+  .timeline {
+    position: relative;
+    padding-left: 40px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, #5a8aff, rgba(90,138,255,0.1));
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 32px;
+    padding-left: 32px;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -26px;
+    top: 8px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #5a8aff;
+    border: 2px solid #0d0d24;
+  }
+
+  .timeline-item h4 {
+    font-size: 16px;
+    color: #b0c8ff;
+    margin-bottom: 6px;
+  }
+
+  .timeline-item p {
+    font-size: 13px;
+    color: rgba(180,200,255,0.45);
+    line-height: 1.7;
+  }
+
+  /* ========== ENDING CARDS ========== */
+  .ending-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .ending-card {
+    border-radius: 20px;
+    padding: 36px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ending-card.success {
+    background: linear-gradient(135deg, rgba(50,120,255,0.12), rgba(80,200,200,0.08));
+    border: 1px solid rgba(80,160,255,0.2);
+  }
+
+  .ending-card.special {
+    background: linear-gradient(135deg, rgba(160,100,255,0.12), rgba(255,100,200,0.08));
+    border: 1px solid rgba(160,100,255,0.2);
+  }
+
+  .ending-card.stay {
+    background: linear-gradient(135deg, rgba(255,180,50,0.08), rgba(255,100,50,0.06));
+    border: 1px solid rgba(255,180,80,0.15);
+  }
+
+  .ending-card.hidden {
+    background: linear-gradient(135deg, rgba(200,200,255,0.1), rgba(255,255,255,0.05));
+    border: 1px solid rgba(200,200,255,0.2);
+  }
+
+  .ending-card .tag {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(180,200,255,0.5);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  .ending-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #c0d8ff;
+    margin-bottom: 10px;
+  }
+
+  .ending-card p {
+    font-size: 14px;
+    color: rgba(180,200,255,0.5);
+    line-height: 1.7;
+  }
+
+  /* ========== TECH STACK ========== */
+  .tech-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .tech-chip {
+    padding: 12px 24px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(100,140,255,0.1);
+    font-size: 14px;
+    color: rgba(200,215,255,0.7);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .tech-chip .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .dot.blue { background: #5a8aff; }
+  .dot.green { background: #50c878; }
+  .dot.purple { background: #a070ff; }
+  .dot.amber { background: #ffb840; }
+  .dot.teal { background: #50c8c8; }
+  .dot.pink { background: #ff80a0; }
+
+  /* ========== DIALOGUE EXAMPLE ========== */
+  .dialogue-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(100,140,255,0.1);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 24px;
+  }
+
+  .dialogue-phase {
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: #5a8aff;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+
+  .dialogue-line {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+
+  .dialogue-speaker {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(160,190,255,0.6);
+    min-width: 60px;
+    padding-top: 2px;
+  }
+
+  .dialogue-text {
+    font-size: 15px;
+    color: rgba(220,230,255,0.8);
+    line-height: 1.7;
+    background: rgba(255,255,255,0.02);
+    padding: 12px 20px;
+    border-radius: 0 12px 12px 12px;
+  }
+
+  .dialogue-text.player {
+    background: rgba(90,138,255,0.08);
+    border-radius: 12px 0 12px 12px;
+  }
+
+  /* ========== HYBRID SYSTEM ========== */
+  .hybrid-diagram {
+    display: flex;
+    gap: 24px;
+    margin-top: 32px;
+  }
+
+  .hybrid-col {
+    flex: 1;
+    background: rgba(255,255,255,0.02);
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid rgba(100,140,255,0.08);
+  }
+
+  .hybrid-col h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #b0c8ff;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hybrid-col ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .hybrid-col li {
+    font-size: 13px;
+    color: rgba(180,200,255,0.5);
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    line-height: 1.5;
+  }
+
+  .hybrid-col li:last-child { border-bottom: none; }
+
+  /* ========== JOB CARDS (MOBILE) ========== */
+  .job-cards-mobile { display: none; }
+
+  .job-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(100,140,255,0.1);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+
+  .job-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .job-card-earth {
+    font-size: 12px;
+    color: rgba(160,190,255,0.5);
+    background: rgba(90,138,255,0.08);
+    padding: 3px 10px;
+    border-radius: 10px;
+  }
+
+  .job-card-desc {
+    font-size: 13px;
+    color: rgba(180,200,255,0.5);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 1440px) {
+    .cover, .page { width: 100%; }
+  }
+
+  @media (max-width: 768px) {
+    .cover {
+      min-height: auto;
+      padding: 60px 24px;
+    }
+
+    .cover-title { font-size: 36px; }
+    .cover-subtitle { font-size: 16px; margin-bottom: 36px; }
+    .cover-label { font-size: 12px; letter-spacing: 4px; }
+
+    .cover-meta {
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .page {
+      min-height: auto;
+      padding: 60px 24px;
+    }
+
+    .section-title { font-size: 28px; }
+    .section-desc { font-size: 14px; }
+
+    .card-grid,
+    .card-grid-2 {
+      grid-template-columns: 1fr;
+    }
+
+    .card { padding: 24px; }
+
+    .flow {
+      flex-direction: column;
+      gap: 8px;
+      margin: 32px 0;
+    }
+
+    .flow-arrow {
+      transform: rotate(90deg);
+      padding: 4px 0;
+    }
+
+    .flow-node {
+      min-width: auto;
+      width: 100%;
+      padding: 16px 20px;
+    }
+
+    .char-card {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 24px;
+      gap: 16px;
+    }
+
+    .char-avatar {
+      width: 80px;
+      height: 80px;
+      font-size: 36px;
+    }
+
+    .char-traits { justify-content: center; }
+
+    .stat-group {
+      grid-template-columns: 1fr;
+    }
+
+    .hybrid-diagram {
+      flex-direction: column;
+    }
+
+    .job-table-desktop { display: none; }
+    .job-cards-mobile { display: block; }
+
+    .ending-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .tech-row {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .tech-chip { width: 100%; justify-content: center; }
+
+    .dialogue-line {
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .dialogue-speaker { min-width: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== PAGE 1: COVER ===== -->
+<div class="cover">
+  <div class="stars"></div>
+  <div class="cover-content">
+    <div class="cover-label">Game Design Document</div>
+    <div class="cover-title">달 육성소</div>
+    <div class="cover-subtitle">
+      달의 뒷면에서 태어난 존재들이<br>
+      인간 세계로 가기 위해 성장하는 육성 시뮬레이션
+    </div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="label">Genre</div>
+        <div class="value">Nurturing Simulation</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Platform</div>
+        <div class="value">Web / Mobile</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Engine</div>
+        <div class="value">Next.js + LLM</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Version</div>
+        <div class="value">v0.1 Draft</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 2: WORLD SETTING ===== -->
+<div class="page page-dark">
+  <div class="page-number">02 / 10</div>
+  <div class="section-label">World Building</div>
+  <div class="section-title">세계관</div>
+  <div class="section-desc">
+    달의 뒷면에는 인간이 알지 못하는 세계가 있다.<br>
+    신화 속 존재들이 태어나고 자라는 곳. 심해와 연결된 이 공간에서,<br>
+    그들은 언젠가 인간과 함께 살기를 꿈꾼다.
+  </div>
+  <div class="divider"></div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon blue">&#127769;</div>
+      <h3>달의 뒷면</h3>
+      <p>신화 속 존재들의 고향. 달의 물이 흐르는 이곳은 오직 이들에게만 보인다. 인간은 이 물을 마실 수 없고, 이 세계를 인식할 수도 없다.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon teal">&#127754;</div>
+      <h3>심해 통로</h3>
+      <p>달의 뒷면과 지구를 잇는 유일한 경로. 바다의 가장 깊은 곳에 숨겨진 통로를 통해 이동한다. 직업을 가진 자만 통과가 허용된다.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon purple">&#127979;</div>
+      <h3>육성 학교</h3>
+      <p>지구로 가기 위한 준비 공간. 직업을 얻기 위해 모든 존재가 입학하며, 이곳에서 자아를 깨우고 성장해 졸업을 목표로 한다.</p>
+    </div>
+  </div>
+
+  <div class="flow" style="margin-top: 60px;">
+    <div class="flow-node">
+      <div class="icon">&#127754;</div>
+      <div class="name">심해에서 탄생</div>
+      <div class="desc">존재의 시작</div>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-node">
+      <div class="icon">&#127769;</div>
+      <div class="name">달의 뒷면</div>
+      <div class="desc">성장 공간</div>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-node">
+      <div class="icon">&#127979;</div>
+      <div class="name">육성 학교 입학</div>
+      <div class="desc">자아 각성</div>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-node">
+      <div class="icon">&#128188;</div>
+      <div class="name">직업 획득</div>
+      <div class="desc">졸업 조건</div>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-node">
+      <div class="icon">&#127758;</div>
+      <div class="name">지구로 출발</div>
+      <div class="desc">바다를 통해</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 3: CORE GAMEPLAY ===== -->
+<div class="page page-blue">
+  <div class="page-number">03 / 10</div>
+  <div class="section-label">Core Gameplay</div>
+  <div class="section-title">핵심 게임 루프</div>
+  <div class="section-desc">
+    플레이어는 조력자로서 캐릭터와 대화하고, 사건 속 선택을 통해 성장을 돕는다.<br>
+    모든 선택과 대화가 성향으로 누적되어 최종 직업과 엔딩을 결정한다.
+  </div>
+  <div class="divider"></div>
+
+  <div class="card-grid card-grid-2">
+    <div class="card">
+      <div class="card-icon blue">&#128172;</div>
+      <h3>대화 시스템</h3>
+      <p>스크립트 기반 이벤트와 LLM 자유 대화의 하이브리드. 플레이어의 말 한마디가 캐릭터의 자아를 깨우고, 성격을 형성한다. 같은 질문도 성장 단계에 따라 다른 반응이 돌아온다.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon purple">&#128200;</div>
+      <h3>성향 누적</h3>
+      <p>6가지 성향축(따뜻함, 논리, 용기, 인내, 호기심, 조화)이 선택과 대화를 통해 누적된다. 플레이어가 어떤 방식으로 캐릭터를 대했는지가 직업을 결정한다.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon teal">&#127793;</div>
+      <h3>자아 성장 4단계</h3>
+      <p>무자각 &rarr; 자아각성 &rarr; 목표설정 &rarr; 졸업준비. 캐릭터의 말투, 사고방식, 질문 수준이 단계마다 달라진다. 성장은 되돌릴 수 없다.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon pink">&#127919;</div>
+      <h3>사건과 선택</h3>
+      <p>학교 생활 속 다양한 사건(시험, 축제, 위기, 실습)에서 플레이어의 선택이 요구된다. 각 선택은 성향에 영향을 미치며, 일부는 돌이킬 수 없는 분기를 만든다.</p>
+    </div>
+  </div>
+
+  <div style="margin-top: 48px;">
+    <h3 style="font-size: 18px; color: #b0c8ff; margin-bottom: 24px; text-align: center;">일과 구조</h3>
+    <div class="flow">
+      <div class="flow-node">
+        <div class="icon">&#9728;&#65039;</div>
+        <div class="name">아침</div>
+        <div class="desc">수업 이벤트 (스크립트)</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node">
+        <div class="icon">&#9729;&#65039;</div>
+        <div class="name">점심</div>
+        <div class="desc">자유 대화 (LLM)</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node">
+        <div class="icon">&#127751;</div>
+        <div class="name">오후</div>
+        <div class="desc">사건 발생 (스크립트)</div>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node">
+        <div class="icon">&#127769;</div>
+        <div class="name">저녁</div>
+        <div class="desc">캐릭터 대화 (LLM)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 4: CHARACTERS ===== -->
+<div class="page page-deep">
+  <div class="page-number">04 / 10</div>
+  <div class="section-label">Characters</div>
+  <div class="section-title">등장 캐릭터</div>
+  <div class="section-desc">
+    달의 뒷면에서 태어난 신화 속 존재들. 각자의 배경과 성격을 가지고 있으며,<br>
+    플레이어와의 대화를 통해 자아를 찾아간다.
+  </div>
+  <div class="divider"></div>
+
+  <div class="char-card">
+    <div class="char-avatar" style="background: rgba(255,220,150,0.1);">&#128048;</div>
+    <div class="char-info">
+      <h3>달토끼</h3>
+      <div class="role">Moon Rabbit &middot; 첫 번째 동기</div>
+      <p>달에서 떡을 찧던 토끼의 후예. 순수하지만 겁이 많다. 자신이 왜 존재하는지 모르는 채로 학교에 입학했다. 플레이어의 따뜻한 말에 가장 먼저 반응하는 캐릭터.</p>
+      <div class="char-traits">
+        <span class="trait">순수함</span>
+        <span class="trait">겁 많음</span>
+        <span class="trait">호기심</span>
+        <span class="trait">따뜻한 말에 약함</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="char-card">
+    <div class="char-avatar" style="background: rgba(100,180,255,0.1);">&#128009;</div>
+    <div class="char-info">
+      <h3>용왕</h3>
+      <div class="role">Dragon King &middot; 자존심 강한 동기</div>
+      <p>심해를 다스리던 용왕의 혈통. 자존심이 높고 쉽게 마음을 열지 않는다. 하지만 내면에는 외로움과 인간 세계에 대한 강한 동경이 있다. 신뢰를 쌓는 데 시간이 필요하다.</p>
+      <div class="char-traits">
+        <span class="trait">자존심</span>
+        <span class="trait">외로움</span>
+        <span class="trait">리더십</span>
+        <span class="trait">느린 신뢰 형성</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="char-card">
+    <div class="char-avatar" style="background: rgba(200,150,255,0.1);">&#129418;</div>
+    <div class="char-info">
+      <h3>인어</h3>
+      <div class="role">Mermaid &middot; 감성적인 동기</div>
+      <p>심해와 달 사이를 오가던 인어의 후손. 노래를 좋아하고 감정이 풍부하지만, 자신의 감정을 언어로 표현하는 데 서투르다. 대화를 통해 표현력을 키워간다.</p>
+      <div class="char-traits">
+        <span class="trait">감성적</span>
+        <span class="trait">표현 서투름</span>
+        <span class="trait">노래</span>
+        <span class="trait">공감 능력</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 5: TENDENCY SYSTEM ===== -->
+<div class="page page-dark">
+  <div class="page-number">05 / 10</div>
+  <div class="section-label">Tendency System</div>
+  <div class="section-title">성향 시스템</div>
+  <div class="section-desc">
+    플레이어의 모든 선택과 대화가 6가지 성향축에 누적된다.<br>
+    최종 성향 조합이 캐릭터의 직업과 엔딩을 결정하는 핵심 시스템.
+  </div>
+  <div class="divider"></div>
+
+  <div class="stat-group">
+    <div class="stat-item">
+      <div class="stat-header">
+        <span class="stat-name">&#10084;&#65039; Heart (따뜻함)</span>
+        <span class="stat-label">공감, 위로, 배려</span>
+      </div>
+      <div class="stat-bar"><div class="stat-bar-fill blue" style="width:75%"></div></div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-header">
+        <span class="stat-name">&#129504; Logic (논리력)</span>
+        <span class="stat-label">분석, 추론, 설명</span>
+      </div>
+      <div class="stat-bar"><div class="stat-bar-fill purple" style="width:60%"></div></div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-header">
+        <span class="stat-name">&#9889; Courage (용기)</span>
+        <span class="stat-label">도전, 대담한 선택</span>
+      </div>
+      <div class="stat-bar"><div class="stat-bar-fill amber" style="width:45%"></div></div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-header">
+        <span class="stat-name">&#9203; Patience (인내)</span>
+        <span class="stat-label">반복, 기다림, 꾸준함</span>
+      </div>
+      <div class="stat-bar"><div class="stat-bar-fill green" style="width:55%"></div></div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-header">
+        <span class="stat-name">&#128269; Curiosity (호기심)</span>
+        <span class="stat-label">질문, 탐구, 새로운 시도</span>
+      </div>
+      <div class="stat-bar"><div class="stat-bar-fill teal" style="width:80%"></div></div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-header">
+        <span class="stat-name">&#9878;&#65039; Harmony (조화)</span>
+        <span class="stat-label">중재, 협력, 균형</span>
+      </div>
+      <div class="stat-bar"><div class="stat-bar-fill pink" style="width:50%"></div></div>
+    </div>
+  </div>
+
+  <div style="margin-top: 48px;">
+    <h3 style="font-size: 18px; color: #b0c8ff; margin-bottom: 20px; text-align: center;">성향 누적 방식</h3>
+    <div class="hybrid-diagram">
+      <div class="hybrid-col">
+        <h4>&#128220; 스크립트 선택지</h4>
+        <ul>
+          <li>"옆에 앉아서 조용히 기다린다" &rarr; Heart +3, Patience +2</li>
+          <li>"왜 우는지 물어본다" &rarr; Curiosity +2, Heart +1</li>
+          <li>"선생님한테 알린다" &rarr; Logic +2, Harmony +1</li>
+        </ul>
+      </div>
+      <div class="hybrid-col">
+        <h4>&#129302; LLM 자유 대화</h4>
+        <ul>
+          <li>위로/공감 발화 &rarr; Heart 자동 감지</li>
+          <li>분석/설명 발화 &rarr; Logic 자동 감지</li>
+          <li>격려/도전 발화 &rarr; Courage 자동 감지</li>
+          <li>LLM이 발화 성향을 분석하여 자동 누적</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 6: JOB SYSTEM ===== -->
+<div class="page page-blue">
+  <div class="page-number">06 / 10</div>
+  <div class="section-label">Job System</div>
+  <div class="section-title">직업 시스템</div>
+  <div class="section-desc">
+    누적된 성향이 졸업 시 직업으로 변환된다. 직업이 있어야만 심해 통로를 통해 지구로 갈 수 있다.<br>
+    직업을 얻지 못하면 달에 남게 된다.
+  </div>
+  <div class="divider"></div>
+
+  <table class="job-table job-table-desktop">
+    <thead>
+      <tr>
+        <th style="width:140px">직업</th>
+        <th style="width:220px">필요 성향</th>
+        <th>역할</th>
+        <th>지구에서의 모습</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="job-name">&#128154; 치유사</span></td>
+        <td><div class="job-req"><span>Heart 40+</span><span>Patience 30+</span></div></td>
+        <td>바다에서 다친 생명을 돌본다</td>
+        <td>해양 생물 보호사</td>
+      </tr>
+      <tr>
+        <td><span class="job-name">&#129517; 길잡이</span></td>
+        <td><div class="job-req"><span>Courage 40+</span><span>Logic 30+</span></div></td>
+        <td>달과 바다 사이 길을 안내한다</td>
+        <td>등대지기</td>
+      </tr>
+      <tr>
+        <td><span class="job-name">&#128214; 이야기꾼</span></td>
+        <td><div class="job-req"><span>Curiosity 40+</span><span>Heart 30+</span></div></td>
+        <td>달의 뒷면 이야기를 전한다</td>
+        <td>작가</td>
+      </tr>
+      <tr>
+        <td><span class="job-name">&#9878;&#65039; 조율사</span></td>
+        <td><div class="job-req"><span>Harmony 40+</span><span>Patience 30+</span></div></td>
+        <td>바다와 육지 사이 분쟁을 중재</td>
+        <td>외교관</td>
+      </tr>
+      <tr>
+        <td><span class="job-name">&#128506; 탐험가</span></td>
+        <td><div class="job-req"><span>Curiosity 35+</span><span>Courage 35+</span></div></td>
+        <td>아무도 모르는 심해를 탐사</td>
+        <td>심해 탐사가</td>
+      </tr>
+      <tr>
+        <td><span class="job-name">&#127793; 달빛 정원사</span></td>
+        <td><div class="job-req"><span>Patience 40+</span><span>Harmony 30+</span></div></td>
+        <td>달의 물로 바다 생태계를 가꾼다</td>
+        <td>해양 생태 복원가</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="job-cards-mobile">
+    <div class="job-card">
+      <div class="job-card-header"><span class="job-name">&#128154; 치유사</span><span class="job-card-earth">해양 생물 보호사</span></div>
+      <div class="job-card-desc">바다에서 다친 생명을 돌본다</div>
+      <div class="job-req"><span>Heart 40+</span><span>Patience 30+</span></div>
+    </div>
+    <div class="job-card">
+      <div class="job-card-header"><span class="job-name">&#129517; 길잡이</span><span class="job-card-earth">등대지기</span></div>
+      <div class="job-card-desc">달과 바다 사이 길을 안내한다</div>
+      <div class="job-req"><span>Courage 40+</span><span>Logic 30+</span></div>
+    </div>
+    <div class="job-card">
+      <div class="job-card-header"><span class="job-name">&#128214; 이야기꾼</span><span class="job-card-earth">작가</span></div>
+      <div class="job-card-desc">달의 뒷면 이야기를 전한다</div>
+      <div class="job-req"><span>Curiosity 40+</span><span>Heart 30+</span></div>
+    </div>
+    <div class="job-card">
+      <div class="job-card-header"><span class="job-name">&#9878;&#65039; 조율사</span><span class="job-card-earth">외교관</span></div>
+      <div class="job-card-desc">바다와 육지 사이 분쟁을 중재</div>
+      <div class="job-req"><span>Harmony 40+</span><span>Patience 30+</span></div>
+    </div>
+    <div class="job-card">
+      <div class="job-card-header"><span class="job-name">&#128506; 탐험가</span><span class="job-card-earth">심해 탐사가</span></div>
+      <div class="job-card-desc">아무도 모르는 심해를 탐사</div>
+      <div class="job-req"><span>Curiosity 35+</span><span>Courage 35+</span></div>
+    </div>
+    <div class="job-card">
+      <div class="job-card-header"><span class="job-name">&#127793; 달빛 정원사</span><span class="job-card-earth">해양 생태 복원가</span></div>
+      <div class="job-card-desc">달의 물로 바다 생태계를 가꾼다</div>
+      <div class="job-req"><span>Patience 40+</span><span>Harmony 30+</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 7: GROWTH PHASES ===== -->
+<div class="page page-deep">
+  <div class="page-number">07 / 10</div>
+  <div class="section-label">Growth System</div>
+  <div class="section-title">자아 성장 단계</div>
+  <div class="section-desc">
+    캐릭터는 4단계를 거쳐 성장한다. 플레이어와의 대화가 성장의 원동력이며,<br>
+    각 단계마다 말투, 사고 수준, 반응이 근본적으로 달라진다.
+  </div>
+  <div class="divider"></div>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <h4>Phase 0 &middot; 무자각</h4>
+      <p>자아가 없는 상태. 짧고 단순한 반응만 가능. "...?" "뭐야 이건..." 같은 반사적 응답.<br>세상에 대한 인식이 거의 없으며, 플레이어의 존재도 명확히 인지하지 못한다.</p>
+    </div>
+    <div class="timeline-item">
+      <h4>Phase 1 &middot; 자아각성</h4>
+      <p>"나는 뭐지?" "왜 나는 여기 있어?" 자기 자신에 대한 질문을 시작한다.<br>플레이어를 인식하고 이름을 부르기 시작. 감정 표현이 늘어나지만 아직 서투르다.</p>
+    </div>
+    <div class="timeline-item">
+      <h4>Phase 2 &middot; 목표설정</h4>
+      <p>지구에 대한 동경이 생김. "지구는 어떤 곳이야?" "나도 갈 수 있어?"<br>직업에 관심을 가지며 적극적으로 질문하고 도전한다. 실패해도 다시 일어서려 한다.</p>
+    </div>
+    <div class="timeline-item">
+      <h4>Phase 3 &middot; 졸업준비</h4>
+      <p>성숙한 대화가 가능. 자신의 강점과 약점을 이해하고, 미래를 구체적으로 그린다.<br>플레이어에게 감사를 표현하며, 곧 다가올 이별을 준비한다.</p>
+    </div>
+  </div>
+
+  <div style="margin-top: 48px;">
+    <h3 style="font-size: 18px; color: #b0c8ff; margin-bottom: 24px; text-align: center;">같은 질문, 다른 반응</h3>
+    <div class="dialogue-box">
+      <div class="dialogue-phase">Player: "넌 이름이 뭐야?"</div>
+      <div class="dialogue-line">
+        <span class="dialogue-speaker">Phase 0</span>
+        <span class="dialogue-text">"...이름? 이름이 뭐야...?"</span>
+      </div>
+      <div class="dialogue-line">
+        <span class="dialogue-speaker">Phase 1</span>
+        <span class="dialogue-text">"나는... 토끼? 근데 왜 나는 '나'라는 걸 알게 된 거지?"</span>
+      </div>
+      <div class="dialogue-line">
+        <span class="dialogue-speaker">Phase 2</span>
+        <span class="dialogue-text">"토끼! 근데 지구에 가면 새 이름을 지어도 되는 거야?"</span>
+      </div>
+      <div class="dialogue-line">
+        <span class="dialogue-speaker">Phase 3</span>
+        <span class="dialogue-text">"나는 토끼야. 이 이름, 네가 처음 불러줬잖아. 고마워."</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 8: STORY EVENTS ===== -->
+<div class="page page-dark">
+  <div class="page-number">08 / 10</div>
+  <div class="section-label">Story Events</div>
+  <div class="section-title">시즌 이벤트</div>
+  <div class="section-desc">
+    학교 생활은 시즌별 주요 이벤트로 구성된다. 각 이벤트는 캐릭터의 성장에<br>
+    결정적인 영향을 미치며, 플레이어의 선택이 분기를 만든다.
+  </div>
+  <div class="divider"></div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon blue">&#127891;</div>
+      <h3>Ch.1 입학식</h3>
+      <p>학교에 도착한 첫날. 캐릭터들과의 첫 만남. 아직 자아가 없는 존재들 사이에서 플레이어(조력자)의 역할이 시작된다.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon purple">&#128221;</div>
+      <h3>Ch.2 첫 시험</h3>
+      <p>간단한 과제가 주어지지만, 자아가 미약한 캐릭터들에겐 큰 도전. 플레이어가 어떻게 도와주느냐에 따라 성장 방향이 갈린다.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon amber">&#127878;</div>
+      <h3>Ch.3 달빛 축제</h3>
+      <p>달의 뒷면 전통 축제. 캐릭터들의 숨겨진 재능이 드러나고, 서로에 대해 깊이 알아가는 계기. 감정 이벤트가 집중된다.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon pink">&#9888;&#65039;</div>
+      <h3>Ch.4 위기</h3>
+      <p>학교에 예상치 못한 사건 발생. 달의 물이 마르기 시작하거나, 심해 통로에 이상이 생기는 등 존재 자체를 위협하는 위기. 선택이 돌이킬 수 없는 분기를 만든다.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon green">&#128736;&#65039;</div>
+      <h3>Ch.5 직업 실습</h3>
+      <p>지구에서의 삶을 미리 체험. 각 직업 후보를 체험해보며 적성을 탐색한다. 이 시기의 선택이 최종 직업에 큰 영향.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon teal">&#127968;</div>
+      <h3>Ch.6 졸업</h3>
+      <p>최종 직업 판정. 직업을 얻은 캐릭터는 심해 통로를 통해 지구로 출발. 플레이어와의 마지막 대화가 기다린다.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 9: ENDINGS ===== -->
+<div class="page page-blue">
+  <div class="page-number">09 / 10</div>
+  <div class="section-label">Endings</div>
+  <div class="section-title">엔딩 시스템</div>
+  <div class="section-desc">
+    모든 엔딩은 의미가 있다. 실패도 게임오버가 아닌 또 다른 이야기의 시작이다.
+  </div>
+  <div class="divider"></div>
+
+  <div class="ending-grid">
+    <div class="ending-card success">
+      <div class="tag">Normal Ending</div>
+      <h3>정규 졸업 - 지구행</h3>
+      <p>직업 조건을 충족하여 졸업. 심해 통로를 통해 지구의 바다로 출발한다. 캐릭터는 인간들 사이에서 새로운 삶을 시작하며, 플레이어에게 마지막 편지를 남긴다.</p>
+    </div>
+    <div class="ending-card special">
+      <div class="tag">Special Ending</div>
+      <h3>선택 졸업 - 두 갈래 길</h3>
+      <p>2개 이상의 직업 조건을 충족. 플레이어가 캐릭터의 최종 직업을 선택해준다. "네가 골라줘. 네가 고른 길이라면 믿을 수 있어."</p>
+    </div>
+    <div class="ending-card stay">
+      <div class="tag">Stay Ending</div>
+      <h3>달 잔류 - 아직은 여기서</h3>
+      <p>직업 조건 미달로 지구행 불가. 하지만 단순한 실패가 아닌, 달의 뒷면에서 새로운 역할을 발견한다. 2회차 플레이 시 이전 성향이 일부 계승되어 강화 루트가 열린다.</p>
+    </div>
+    <div class="ending-card hidden">
+      <div class="tag">Hidden Ending</div>
+      <h3>달과 지구의 다리</h3>
+      <p>전 성향이 균형 있게 달성된 극히 드문 경우. 달과 지구를 잇는 특수한 존재가 된다. 지구로 가되, 달의 뒷면을 잊지 않는 유일한 졸업생.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE 10: TECH & DIALOGUE ENGINE ===== -->
+<div class="page page-deep">
+  <div class="page-number">10 / 10</div>
+  <div class="section-label">Technical Architecture</div>
+  <div class="section-title">기술 스택 & 대화 엔진</div>
+  <div class="section-desc">
+    웹 기반으로 모바일/데스크톱 동시 대응. 스크립트 + LLM 하이브리드 대화 엔진.
+  </div>
+  <div class="divider"></div>
+
+  <h3 style="font-size: 18px; color: #b0c8ff; margin-bottom: 20px; text-align: center;">기술 스택</h3>
+  <div class="tech-row">
+    <div class="tech-chip"><span class="dot blue"></span>Next.js (React)</div>
+    <div class="tech-chip"><span class="dot teal"></span>Tailwind CSS</div>
+    <div class="tech-chip"><span class="dot purple"></span>Zustand (State)</div>
+    <div class="tech-chip"><span class="dot green"></span>IndexedDB (Save)</div>
+  </div>
+  <div class="tech-row">
+    <div class="tech-chip"><span class="dot amber"></span>Claude API (LLM)</div>
+    <div class="tech-chip"><span class="dot pink"></span>Capacitor (Mobile)</div>
+    <div class="tech-chip"><span class="dot blue"></span>Vercel (Deploy)</div>
+    <div class="tech-chip"><span class="dot purple"></span>PWA (Offline)</div>
+  </div>
+
+  <div style="margin-top: 48px;">
+    <h3 style="font-size: 18px; color: #b0c8ff; margin-bottom: 20px; text-align: center;">하이브리드 대화 엔진</h3>
+    <div class="hybrid-diagram">
+      <div class="hybrid-col">
+        <h4>&#128220; JSON Script Engine</h4>
+        <ul>
+          <li>메인 스토리 이벤트</li>
+          <li>선택지 기반 분기</li>
+          <li>연출 (표정, BGM, 효과)</li>
+          <li>시즌 이벤트 진행</li>
+          <li>졸업/엔딩 시퀀스</li>
+        </ul>
+      </div>
+      <div class="hybrid-col">
+        <h4>&#129302; LLM Dialogue</h4>
+        <ul>
+          <li>자유 대화 (점심/저녁)</li>
+          <li>성장 단계별 System Prompt</li>
+          <li>발화 성향 자동 분석</li>
+          <li>캐릭터 성격 일관성 유지</li>
+          <li>대화 횟수 제한 (달의 물)</li>
+        </ul>
+      </div>
+      <div class="hybrid-col">
+        <h4>&#128200; State Machine</h4>
+        <ul>
+          <li>6축 성향 누적 관리</li>
+          <li>자아 성장 단계 전환</li>
+          <li>이벤트 해금 조건 체크</li>
+          <li>직업 매칭 판정</li>
+          <li>세이브/로드 (IndexedDB)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 48px;">
+    <h3 style="font-size: 18px; color: #b0c8ff; margin-bottom: 20px; text-align: center;">비용 & 최적화</h3>
+    <div class="card-grid">
+      <div class="card">
+        <h3>LLM 비용 제어</h3>
+        <p>"달의 물" 시스템으로 자유 대화 횟수를 자연스럽게 제한. 하루 대화 가능 횟수가 정해져 있어, 매 대화가 소중해진다.</p>
+      </div>
+      <div class="card">
+        <h3>모바일 최적화</h3>
+        <p>세로 모드 우선 설계. CSS 애니메이션 위주의 가벼운 연출. 모바일 오디오 자동재생 제한 대응.</p>
+      </div>
+      <div class="card">
+        <h3>배포 전략</h3>
+        <p>PWA로 시작하여 빠르게 검증. 반응 좋으면 Capacitor로 앱스토어 배포. 하나의 코드베이스로 전 플랫폼 대응.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
